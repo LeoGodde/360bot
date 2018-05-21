@@ -1,6 +1,8 @@
 #include <SPI.h>
 #include <Wire.h>
-#include <SparkFunLSM9DS1.h>
+#include <I2Cdev.h>
+#include <MPU6050.h>
+#include <AccelStepper.h>
 #include <PID_v1.h>
 #include <math.h>
 
