@@ -1,10 +1,9 @@
-#include <SPI.h>
-#include <Wire.h>
-//#include <MPU6050.h>
-#include <AccelStepper.h>
-#include <MultiStepper.h>
-#include <PID_v1.h>
-#include <math.h>
+#include <SPI.h> //Comunicação Serial
+#include <Wire.h> //Comunicação I2C
+#include <AccelStepper.h> //Biblioteca para Motores de Passo
+#include <MultiStepper.h> //Biblioteca para controlar motores de passo paralelamente
+#include <PID_v1.h> //Proporcional Integrativo Derivativo
+#include <math.h> //Matemática
 
 float calcAngle (float xVal, float yVal);
 float calcMotorSpeed (float V_mag, float V_theta, float motorAngle, float w = 0.0, float R = 1.0);
@@ -23,8 +22,6 @@ int motor3Direction = 7;
 unsigned long t0 = 0;
 unsigned long t;
 long T = 9;
-
-//MPU6050 imu;
 
 float ax = 0.0;
 float ay = 0.0;
@@ -69,7 +66,7 @@ float rollSum = 0.0;
 float pitchCalibration = -4.0;
 float rollCalibration = 1.0;
 
-// Complimentary Filter Constant
+// Filtro complementar constante
 const float a = 0.02;
 
 float vx = 0.0;
@@ -93,7 +90,7 @@ double kp = 70.0;
 double ki = 2.0;
 double kd = 0.1;
 
-/////////variavel marolo//////
+/////////Variável marolo//////
 double gain_marolo = 1.1;
 double botSize;
 
@@ -116,9 +113,9 @@ void setup() {
   Wire.begin();
 
   setupMPU();
-  // Initialize IMU
+  // Inicializa IMU
 
-  // Initialize PID Control Parameters
+  // Inicializa configurações PID
   setpointX = 0.0;
   setpointY = 0.0;
 
@@ -161,7 +158,8 @@ void loop() {
   X_gyro = gy;
 
   t = millis(); //contador de tempo de funcionamento
-  //bloqueador de entrada. Só entra depois de algum tempo de funcionamento. Elimina primeiras leituras
+  
+  //bloqueador de entrada. Só entra depois de algum tempo de funcionamento. Elimina primeiras leituras de cada loop
   if(t - t0 >= T) {
     t0 = t;
     // (1 - a é filtro) * (vx + leitura do gyro Y * ganho)
@@ -204,7 +202,7 @@ void loop() {
     //
     //
     //
-    //calcular relação bola e rodinha
+    // calcular relação bola e rodinha
     //
     //
     //
@@ -217,7 +215,6 @@ void loop() {
     Stepper2.setMaxSpeed(speedSteppers);
     Stepper3.setMaxSpeed(speedSteppers);
 
-
     //MultiStepper
     long positions[3];
 
@@ -226,10 +223,9 @@ void loop() {
     positions[2] = StepsStepper3;
     
     Steppers.moveTo (positions);
-    Steppers.runSpeedToPosition ();
+    Steppers.runSpeedToPosition (); //
 
   }
-//  delay(PRINT_SPEED);
 }
 
 void setupMPU(){
@@ -246,10 +242,10 @@ void setupMPU(){
   Wire.write(0x10); //Setting the accel to +/- 8g
   Wire.endTransmission();
 
-  Wire.beginTransmission(0b1101000);                                      //Start communication with the address found during search
-  Wire.write(0x1A);                                                          //We want to write to the CONFIG register (1A hex)
-  Wire.write(0x03);                                                          //Set the register bits as 00000011 (Set Digital Low Pass Filter to ~43Hz)
-  Wire.endTransmission();                                                    //End the transmission with the gyro
+  Wire.beginTransmission(0b1101000); //Start communication with the address found during search
+  Wire.write(0x1A); //We want to write to the CONFIG register (1A hex)
+  Wire.write(0x03); //Set the register bits as 00000011 (Set Digital Low Pass Filter to ~43Hz)
+  Wire.endTransmission(); //End the transmission with the gyro
 }
 
 void recordRegisters() {
@@ -283,6 +279,6 @@ float calcAngle (float xVal, float yVal) {
   else if((xVal < 0.0 && yVal >= 0.0) || (xVal < 0.0 && yVal < 0.0))
     return atan(yVal/xVal) + myPI;
   else
-    return atan(yVal/xVal) + 2*myPI;
+    return atan(yVal/xVal) + 2 * myPI;
 }
 
