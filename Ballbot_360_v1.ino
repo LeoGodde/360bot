@@ -95,20 +95,15 @@ double kd = 0.1;
 
 /////////variavel marolo//////
 double gain_marolo = 1.1;
-double botMeter;
+double botSize;
 
 double timer;
-//float xVal;
-//float yVal;
-//float calcAngle;
-//float calcMotorSpeed;
-
 
 MultiStepper Steppers;
 
 //inputX é o pitch e o inputY é o roll
-PID xPID(&inX, &outX, &setpointX, kp, ki, kd, DIRECT); // 70, 2, 0.1
-PID yPID(&inY, &outY, &setpointY, kp, ki, kd, DIRECT); //
+PID xPID(&inX, &outX, &setpointX, kp, ki, kd, DIRECT);
+PID yPID(&inY, &outY, &setpointY, kp, ki, kd, DIRECT);
 unsigned long i = 0;
 
 AccelStepper Stepper1 (AccelStepper::DRIVER,6,7);
@@ -198,7 +193,7 @@ void loop() {
     double velocityStepper3 = diffStepper3 * speedStepper3;
 
     //Corrigir:
-    double convert_vLinear = (atan(90/vLinear) * botMeter * gain_marolo);
+    double convert_vLinear = (atan(90/vLinear) * botSize * gain_marolo);
     //Calcula quantidade de passos para correção
     double Step = (convert_vLinear/(67 * myPI) / (3200));
     //relação de passos por motor
